@@ -22,7 +22,6 @@ const getUserWithEmail = function(email) {
     .query(`SELECT * FROM users WHERE email = $1;`, [email])
     .then((result) => {
       if (result.rows[0]) {
-      console.log(result.rows[0]);
       return result.rows[0];
       } else {
         return null;
@@ -44,7 +43,6 @@ const getUserWithId = function(id) {
   .query(`SELECT * FROM users WHERE id = $1;`, [id])
   .then((result) => {
     if (result.rows[0]) {
-    console.log(result.rows[0]);
     return result.rows[0];
     } else {
       return null;
@@ -69,12 +67,7 @@ const addUser =  function(user) {
   VALUES ($1, $2, $3)
   RETURNING *;`, [user.name, user.email, user.password])
   .then((result) => {
-    if (result.rows[0]) {
-    console.log(result.rows[0]);
     return result.rows[0];
-    } else {
-      return null;
-    }
   })
   .catch((err) => {
     console.log(err.message);
@@ -101,12 +94,7 @@ const getAllReservations = function(guest_id, limit = 10) {
     ORDER BY reservations.start_date
     LIMIT $2;`, [guest_id, limit])
     .then((result) => {
-      if (result.rows) {
-      console.log(result.rows);
       return result.rows;
-      } else {
-        return null;
-      }
     })
     .catch((err) => {
       console.log(err.message);
@@ -163,14 +151,14 @@ exports.getAllReservations = getAllReservations;
     }
   }
 
-  queryString += `GROUP BY properties.id \n`;
+  queryString += `GROUP BY properties.id `;
 
   if (options.minimum_rating) {
     queryParams.push(options.minimum_rating);
     if (queryParams.length > 1) {
-      queryString += `  HAVING AVG(property_reviews.rating) >= $${queryParams.length} `;
+      queryString += `HAVING AVG(property_reviews.rating) >= $${queryParams.length} `;
     } else {
-      queryString += `  HAVING AVG(property_reviews.rating) >= $${queryParams.length} `;
+      queryString += `HAVING AVG(property_reviews.rating) >= $${queryParams.length} `;
     }
   }
 
@@ -179,8 +167,6 @@ exports.getAllReservations = getAllReservations;
   ORDER BY cost_per_night
   LIMIT $${queryParams.length};
   `;
-
-  console.log(queryString, queryParams);
 
   return pool.query(queryString, queryParams).then((res) => res.rows);
 };
@@ -199,12 +185,7 @@ const addProperty = function(property) {
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
     RETURNING *;`, [property.owner_id, property.title, property.description, property.thumbnail_photo_url, property.cover_photo_url, property.cost_per_night, property.street, property.city, property.province, property.post_code, property.country, property.parking_spaces, property.number_of_bathrooms, property.number_of_bedrooms])
     .then((result) => {
-      if (result.rows) {
-      console.log(result.rows);
       return result.rows;
-      } else {
-        return null;
-      }
     })
     .catch((err) => {
       console.log(err.message);
